@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ganesh Chaturthi Poster Maker</title>
+
+  <!-- Stylish font -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #eee;
+      padding: 20px;
+    }
+    canvas {
+      border: 2px solid #333;
+      border-radius: 10px;
+      margin-top: 15px;
+      max-width: 100%;
+      height: auto;
+    }
+    input, button {
+      margin: 10px;
+      padding: 8px 12px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🙏 Ganesh Chaturthi Poster Maker 🙏</h2>
+  
+  <!-- Upload photo -->
+  <input type="file" id="photoInput" accept="image/*"><br>
+  
+  <!-- Enter name -->
+  <input type="text" id="nameInput" placeholder="Enter your name"><br>
+  
+  <!-- Buttons -->
+  <button onclick="generatePoster()">Generate Poster</button>
+  <button onclick="downloadPoster()">Download Poster</button>
+  
+  <br>
+  <!-- Canvas -->
+  <canvas id="posterCanvas" width="600" height="800"></canvas>
+  
+  <script>
+    const canvas = document.getElementById("posterCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Background template (Ganesh Poster)
+    const template = new Image();
+    template.src = "ganesh.png";  // your poster background
+
+    let userImage = null;
+
+    // Upload photo
+    document.getElementById("photoInput").addEventListener("change", e => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        userImage = new Image();
+        userImage.src = event.target.result;
+        userImage.onload = () => generatePoster();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    function generatePoster() {
+      const name = document.getElementById("nameInput").value;
+
+      // Draw background template
+      ctx.drawImage(template, 0, 0, canvas.width, canvas.height);
+
+      // --- FIXED POSITIONING ---
+      // White square coordinates (adjust as per your template)
+      const photoX = 40;    // left se distance
+      const photoY = 640;   // top se distance
+      const photoW = 120;   // width of white square
+      const photoH = 120;   // height of white square
+
+      // Draw user photo in white square
+      if (userImage) {
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(photoX, photoY, photoW, photoH);
+        ctx.drawImage(userImage, photoX, photoY, photoW, photoH);
+      }
+
+      // Name position (after शुभेच्छुक:)
+      if (name) {
+        ctx.font = "28px 'Great Vibes', cursive";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "left";
+        ctx.fillText(name, 260, 705);  // x=260, y=705 adjust karo
+      }
+    }
+
+    function downloadPoster() {
+      const link = document.createElement("a");
+      link.download = "GaneshPoster.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    // Jab background load ho jaye to canvas refresh karo
+    template.onload = () => generatePoster();
+  </script>
+</body>
+</html>
